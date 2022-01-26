@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 # Присваиваем имя переменной для адреса ссылки сайта.
 seed="https://ko.com.ua/allarticles"
 
-
 # Следующая функция извлекает необходимую информацию 
 # из найденых обьектов.
 def get_page_content(link):
@@ -19,17 +18,6 @@ def get_page_content(link):
     page = requests.get(link)
     # Извлекаем данные найденых обьектов из файлов HTML и XML.
     soup = BeautifulSoup(page.content, "html.parser")
-    # Формируем словарь с структурой данных ивлекаемой информации.
-    page_info = {
-        "url": "link",  # ссылка на новость
-        "title": "soup.h1.text",  # заголовок новости
-        "img": "soup.find('div',class_='content artbody').img['src']",  # ссылка на изображение
-        "body": "soup.find('p',class_='intro1').text",  # текст новости
-        "author": "soup.find('span',class_='submitted').a.text",  # автор новости (если указывается)
-        "date": "soup.find('span',class_='submitted').text.strip().split()[-4:]",  # дата публикации новости в формате DD-MM-YY
-        "time": None  # время публикации новости в формате HH:MM
-    }
-
     # Извлекаем необходимую информацию и выводим на экран.    
     url=link # Ссылка приходит на вход (уже выведена на экран).
     print(f"ссылка на статью: {url}")
@@ -37,14 +25,24 @@ def get_page_content(link):
     print(f"заголовок:{title}")
     img=soup.find('div',class_='content artbody').img['src'] # Ссылка на картинку.
     print(f'ссылка на картинку:{"https://ko.com.ua"+img}')
-    body=soup.find('p',class_='intro1').text # Получаем краткое содержание текста.
+    body=soup.find('div',class_='content artbody').text # Получаем краткое содержание текста.
     print(f"текст:{body}")
     author=soup.find('span',class_='submitted').a.text # Автор статьи.
     print(f"автор статьи:{author}")
-    date=soup.find('span',class_='submitted').text.strip().split()[-4:] # Дата в формате:DD-MM-YY.
+    date=soup.find('span',class_='submitted').text.strip().split()[-2:] # Дата в формате:DD-MM-YY.
     print(f'дата:{" ".join(date)}') # при выводе на экран применяем метод для сборки строки с разделителем.
+    
+    # Формируем словарь с структурой данных ивлекаемой информации.
+    page_info = {
+        "url": link,  # ссылка на новость
+        "title": title,  # заголовок новости
+        "img":"https://ko.com.ua"+img,  # ссылка на изображение
+        "body": body,  # текст новости
+        "author": author,  # автор новости (если указывается)
+        "date": date,  # дата публикации новости в формате DD-MM-YY
+        "time": None  # время публикации новости в формате HH:MM
+    }
     return page_info # Возвращаем наши данные.
-
 
 # Данная функция извлекает из сайта необходимые ссылки.
 def get_links():
@@ -77,8 +75,8 @@ def main():
         info = get_page_content(link) # Собираем наши данные по каждой ссылке.
         top_news.append(info) # Здесь добавляем получаемые данные в список.
     
-    with open("www-news-com.json", "wt") as f: # Открываем json файл.
-         json.dump(top_news, f )# форматируем данные в json файл.
+    with open("www-ko-com-ua.json", "wt",encoding='utf-8') as f: # Открываем json файл.
+         json.dump(top_news, f,ensure_ascii=False )# форматируем данные в json файл.
     print("Работа завершена") # Выводим на экран сообщение о завершении работы.
 
 # Главнаю функция.
