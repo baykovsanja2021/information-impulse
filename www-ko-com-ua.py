@@ -25,7 +25,7 @@ def get_page_content(link):
     print(f"заголовок:{title}")
     img=soup.find('div',class_='content artbody').img['src'] # Ссылка на картинку.
     print(f'ссылка на картинку:{"https://ko.com.ua"+img}')
-    body=soup.find('div',class_='content artbody').text.strip() # Получаем краткое содержание текста.
+    body=soup.find('div',class_='content artbody').text.strip() # Получаем содержание текста.
     print(f"текст:{body}")
     author=soup.find('span',class_='submitted').a.text # Автор статьи.
     print(f"автор статьи:{author}")
